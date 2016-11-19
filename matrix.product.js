@@ -1,6 +1,10 @@
 // NOTE: Implement Memoization 
 (function(w){
 
+  function checkVariableType(v, t){
+    return Object.prototype.toString.call(v) === '[object ' + t + ']';
+  }
+
   function checkEquals(x, y){
     return x === y;
   }
@@ -18,8 +22,23 @@
 
   function getVectorSize(v){  
 
-    // Fast check :S
-    return [v.length, v[0].length];
+    var vZero = v[0],
+        firstElement = vZero[0],
+        result = [];
+    
+    result.push(v.length);
+
+    // firstElement would be a number or an array
+    // if is an array... is a column vector
+    // otherwise... is a row vector/matrix
+    if (checkVariableType(firstElement, 'Array')){
+      result.push(vZero.length);
+      result.reverse();
+    } else {
+      result.push(vZero.length);
+    }
+
+    return result;
   }
 
   function getProductSize(a, b){
@@ -71,23 +90,51 @@
     return result;
   }
 
-  function isVector(a){
-    var aSize = getVectorSize(a);
+  // DEPRECATE THIS!!
+  // function isVector(a){
+  //   var aSize = getVectorSize(a);
+  // 
+  //   return aSize[0] !== aSize[1] ? true : false;
+  // }
 
-    return aSize[0] !== aSize[1] ? true : false;
+  function isRowVector(a){
+
+    var aSize = getVectorSize(a);
+    return aSize[0] <= aSize[1] ? true : false;
+  }
+
+  function isColVector(a){
+
+    var aSize = getVectorSize(a);
+    return aSize[0] > aSize[1] ? true : false;
   }
 
   function isMatrix(a){
-    var aSize = getVectorSize(a);
 
+    var aSize = getVectorSize(a);
     return aSize[0] === aSize[1] ? true : false;
   }
 
 
   function multiplyVectors(a, b){
 
-    if (isVector(a)){
-      return rowPerColumn(a, b);
+    var x = getVectorSize(a),
+        y = getVectorSize(b),
+        aTest = [isRowVector(a), isColVector(a)],
+        bTest = [isRowVector(b), isColVector(b)];
+
+    if (canBeMultiplicated(a, b)){
+      
+      if (isRowVector(a)){
+
+        return rowPerColumn(a, b);
+      } else {
+        
+        // Implement the tensor product
+        // return columnPerRow(a, b);
+      }
+    } else {
+      console.error("Cannot multiplicate a[] * b[]");
     }
   }
 
@@ -101,6 +148,6 @@
 })(window);
 
 /*
-  matrixProduct.prod([[1, 2, 3], [[[1],[2],[3]]]);
+  matrixProduct.prod([[1, 2, 3]], [[[1],[2],[3]]]);
   matrixProduct.prod([[1, 2, 3], [4,5,6]], [[[1],[2],[3]], [[4],[5],[6]]]);
 */
