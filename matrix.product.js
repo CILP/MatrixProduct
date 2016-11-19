@@ -25,8 +25,6 @@
     var vZero = v[0],
         firstElement = vZero[0],
         result = [];
-    
-    result.push(v.length);
 
     result = [v.length, vZero.length];
 
