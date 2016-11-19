@@ -28,14 +28,13 @@
     
     result.push(v.length);
 
+    result = [v.length, vZero.length];
+
     // firstElement would be a number or an array
     // if is an array... is a column vector
     // otherwise... is a row vector/matrix
     if (checkVariableType(firstElement, 'Array')){
-      result.push(vZero.length);
       result.reverse();
-    } else {
-      result.push(vZero.length);
     }
 
     return result;
