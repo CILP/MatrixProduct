@@ -38,6 +38,32 @@
     return result;
   }
 
+  // NOTE: Optimize this :(
+  // REFACTORIZAR
+  function colVectorToRowVectorTensor(v){
+
+    // recibe todo el vector de columnas
+    // [ [ [a], [b], [c] ], [ [a], [b], [c] ] ]
+    var vSize = getVectorSize(v); // [3, 2]
+    var i, j;
+
+    var nuevoAcomodo = [];
+    
+    for (i = 0; i !== vSize[1]; i++){
+
+      for (j = 0; j !== vSize[0]; j++){
+
+        if (checkVariableType(nuevoAcomodo[j], 'Array')){
+          nuevoAcomodo[j].push(v[i][j][0]);
+        } else {
+          nuevoAcomodo[j] = [v[i][j][0]];
+        }
+      }
+    }
+
+    return nuevoAcomodo;
+  }
+
   function getProductSize(a, b){
 
     var aSize = getVectorSize(a),
@@ -54,19 +80,65 @@
     return checkEquals(aSize[1], bSize[0]);
   }
 
-  function dotProduct(va, vb){
+  // DEPRECATE THIS!!
+  // function dotProduct(va, vb){
+  // 
+  //   var vaLen = va.length,
+  //       products = [],
+  //       i;
+  // 
+  //   for (i = 0; i !== vaLen; i++){
+  //     products.push(va[i] * vb[i]);
+  //   }
+  // 
+  //   return products.reduce(function(x, y){
+  //     return x + y;
+  //   });
+  // 
+  //   return products;
+  // }
+
+  function getDotProduct(p){
+
+    return p.reduce(function(x, y){
+      return x + y;
+    });
+  }
+
+  // Default Way, Row * Col
+  function getClassicProducts(va, vb){
 
     var vaLen = va.length,
         products = [],
         i;
-
+    
+    // FIXME: esto solo funciona cuando la matriz
+    // va tiene la misma longitud que la matriz vb
+    // por eso si se debe de hacer el getTensorProduct :(
     for (i = 0; i !== vaLen; i++){
       products.push(va[i] * vb[i]);
     }
 
-    return products.reduce(function(x, y){
-      return x + y;
+    return products;
+  }
+
+  // Innecesario
+  function getTensorProducts(va, vb){
+
+    var products = [];
+
+    va.forEach(function(c){
+
+      var tmp = [];
+
+      vb.forEach(function(r){
+        tmp.push(c * r);
+      });
+
+      products.push(tmp);
     });
+
+    return products;
   }
 
   // result will be an dot product array
@@ -78,7 +150,46 @@
 
       var tmp = [];
       cv.forEach(function(col){
-        tmp.push(dotProduct(row, colVectorToRowVector(col)));
+        tmp.push(getDotProduct(getClassicProducts(row, colVectorToRowVector(col))));
+      });
+
+      result.push(tmp);
+    });
+
+    return result;
+  }
+
+  function colPerRow(cv, rv){
+
+    var result = [];
+
+    // result = getTensorProducts(cv, rv);
+
+    /*cv.forEach(function(col){
+
+      var toVector = colVectorToRowVector(col); // [x, y, z]
+      var tmp = [];
+
+      toVector.forEach(function(c){
+        
+        // x .. y .. z
+        // tmp = getTensorProducts(c, rv);
+        rv.forEach
+      });
+
+      result.push(tmp);
+    });*/
+
+    // new Way
+    var cvToRow = colVectorToRowVectorTensor(cv);
+
+    cvToRow.forEach(function(cr){
+
+      var tmp = [];
+      rv.forEach(function(row){
+        tmp.push(getTensorProducts(cr, row));
+
+        console.info(tmp);
       });
 
       result.push(tmp);
@@ -129,6 +240,17 @@
         
         // Implement the tensor product
         // return columnPerRow(a, b);
+
+        // Si a es una columna de longtiud n * 1
+        // Se debe obtener el tensor product
+        if (x[1] === 1){
+          return colPerRow(a, b);
+        } else {
+          // dot product
+        }
+
+        // Si a es una columna de longitud n * m
+        // Se siguen la forma normal por 
       }
     } else {
       console.error("Cannot multiplicate a[] * b[]");
@@ -139,7 +261,6 @@
     w.matrixProduct = {
       prod: multiplyVectors
     };
-
   })();
 
 })(window);
