@@ -122,7 +122,6 @@
     return products;
   }
 
-  // Innecesario
   function getTensorProducts(va, vb){
 
     var products = [];
@@ -163,36 +162,18 @@
 
     var result = [];
 
-    // result = getTensorProducts(cv, rv);
-
-    /*cv.forEach(function(col){
-
-      var toVector = colVectorToRowVector(col); // [x, y, z]
-      var tmp = [];
-
-      toVector.forEach(function(c){
-        
-        // x .. y .. z
-        // tmp = getTensorProducts(c, rv);
-        rv.forEach
-      });
-
-      result.push(tmp);
-    });*/
-
-    // new Way
     var cvToRow = colVectorToRowVectorTensor(cv);
 
     cvToRow.forEach(function(cr){
 
-      var tmp = [];
+      // var tmp = [];
       rv.forEach(function(row){
-        tmp.push(getTensorProducts(cr, row));
+        result.push(getTensorProducts(cr, row));
 
-        console.info(tmp);
+        // console.info(tmp);
       });
 
-      result.push(tmp);
+      // result.push(tmp);
     });
 
     return result;
@@ -268,4 +249,9 @@
 /*
   matrixProduct.prod([[1, 2, 3]], [[[1],[2],[3]]]);
   matrixProduct.prod([[1, 2, 3], [4,5,6]], [[[1],[2],[3]], [[4],[5],[6]]]);
+
+  matrixProduct.prod([[[1],[4],[7],[10]], [[2],[5],[8],[11]], [[3],[6],[9],[12]]], [[10,20,30,40],[100,200,300,400],[1,2,3,4]]);
+[[[1],[4],[7],[10]], [[2],[5],[8],[11]], [[3],[6],[9],[12]]]
+[[10,20,30,40],[100,200,300,400],[1,2,3,4]]
+
 */
